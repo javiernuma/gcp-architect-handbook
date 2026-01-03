@@ -30,7 +30,14 @@ jobs:
       # Valida cada blueprint por separado (puedes añadir más líneas aquí)
       - name: Validate Lab 01
         run: |
-          cd blueprints/compute-basics
-          terraform init -backend=false
-          terraform validate
+      # Usamos -d para verificar si el directorio existe antes de entrar
+          if [ -d "blueprints/compute-basics" ]; then
+            cd blueprints/compute-basics
+            terraform init -backend=false
+            terraform validate
+          else
+            echo "Error: La carpeta blueprints/compute-basics no existe en el repo."
+            ls -R blueprints # Esto te ayudará a ver qué nombres tienen tus carpetas en el log de GitHub
+            exit 1
+          fi
           
