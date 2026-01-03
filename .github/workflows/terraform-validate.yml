@@ -1,0 +1,39 @@
+name: "Terraform Infrastructure Validation"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  terraform:
+    name: "Terraform Lint and Validate"
+    runs-on: ubuntu-latest
+
+    # Definimos el directorio de trabajo donde están tus módulos
+    defaults:
+      run:
+        working-directory: ./modules/compute/virtual-machine
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      # 1. Verifica que el código esté formateado según los estándares de Hashicorp
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        working-directory: .
+
+      # 2. Inicializa Terraform (necesario para la validación)
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      # 3. Valida la sintaxis y la lógica interna de los archivos .tf
+      - name: Terraform Validate
+        run: terraform validate
