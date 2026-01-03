@@ -33,3 +33,4 @@ jobs:
           cd blueprints/compute-basics
           terraform init -backend=false
           terraform validate
+          

@@ -1,24 +1,39 @@
 variable "project_id" {
-  description = "El ID del proyecto de GCP"
+  description = "GCP Project ID"
   type        = string
 }
 
 variable "region" {
-  default     = "us-central1"
-  type        = string
+  type    = string
+  default = "us-central1"
 }
 
 variable "zone" {
-  default     = "us-central1-a"
-  type        = string
-}
-
-variable "instance_name" {
-  default     = "instance-1"
-  type        = string
+  type    = string
+  default = "us-central1-a"
 }
 
 variable "machine_type" {
-  default     = "e2-medium"
-  type        = string
+  type    = string
+  default = "e2-medium"
+}
+
+variable "is_public" {
+  type    = bool
+  default = true
+}
+
+variable "network_name" {
+  type    = string
+  default = "default"
+}
+
+variable "subnet_name" {
+  type    = string
+  default = "default"
+}
+
+variable "network_tags" {
+  type    = list(string)
+  default = ["http-server", "lb-backend"]
 }
