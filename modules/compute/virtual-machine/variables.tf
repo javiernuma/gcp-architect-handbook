@@ -1,3 +1,7 @@
+variable "project_id" {
+  type = string
+}
+
 variable "instance_name" {
   type = string
 }

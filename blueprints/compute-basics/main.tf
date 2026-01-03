@@ -1,4 +1,4 @@
-module "virtualmachine" {
+module "virtual-machine" {
   source = "../../modules/compute/virtual-machine"
 
   # Pasamos las variables que el módulo necesita
@@ -9,7 +9,6 @@ module "virtualmachine" {
   image_family  = var.image_family
 
   # Red y Seguridad
-  fix: correct variable block syntax by removing commasfix: correct variable block syntax by removing commas  network_name = var.network_name
   subnet_name  = var.subnet_name
   is_public    = var.is_public
   network_tags = var.network_tags # Esto habilita el Firewall para el puerto 80
