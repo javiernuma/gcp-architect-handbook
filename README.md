@@ -7,9 +7,6 @@
 
 ![Validate](https://github.com/javiernuma/gcp-architect-handbook/actions/workflows/terraform-validate.yml/badge.svg)
 
-# GCP Architect Handbook
-Manual de infraestructura como código para **DSION Group**.
-
 ## 📌 Overview
 Este repositorio es un compendio de **patrones de arquitectura, infraestructura como código (IaC) y decisiones técnicas**. Representa la síntesis entre la preparación para la certificación *GCP Professional Cloud Architect* y la resolución de desafíos complejos en infraestructuras **Multi-SaaS empresariales**.
 
@@ -41,6 +38,11 @@ Gestión de persistencia para arquitecturas distribuidas.
 * **Fencing Token Patterns:** Implementación de patrones de integridad para evitar escrituras concurrentes conflictivas en sistemas distribuidos.
 
 ---
+### 🔗 Navegación Rápida
+* 📂 **[Catálogo de Blueprints](./blueprints/README.md)**: Explora las soluciones orquestadas y laboratorios validados.
+* 📦 **[Librería de Módulos](./modules/README.md)**: Revisa los componentes técnicos reutilizables.
+* 📜 **[Registro de Decisiones (ADR)](./adr/README.md)**: Entiende el porqué detrás de cada decisión técnica.
+
 
 ## 📂 Project Structure
 
@@ -55,3 +57,5 @@ Gestión de persistencia para arquitecturas distribuidas.
 └── blueprints/            # Full-stack solutions based on Skillboost labs
     ├── global-lb-backend/ # Global HTTPS LB + Cloud Armor + Cloud Run
     └── internal-micro-svc/# Private ILB + Managed Instance Groups
+
+

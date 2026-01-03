@@ -3,11 +3,6 @@ variable "project_id" {
   type        = string
 }
 
-variable "instance_name" {
-  description = "Nombre de la instancia"
-  type        = string
-}
-
 variable "machine_type" {
   description = "Tipo de máquina (ej: e2-medium)"
   type        = string
@@ -32,7 +27,7 @@ variable "network_tags" {
 variable "is_public" {
   description = "Define si la VM tiene IP pública"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "image_family" {
@@ -50,4 +45,10 @@ variable "subnet_name" {
   description = "Nombre de la subred"
   type        = string
   default     = "default"
+}
+
+variable "instance_names" {
+  type        = list(string)
+  description = "Lista de nombres para las instancias de VM"
+  default     = ["gcplab"] # Un valor por defecto seguro
 }

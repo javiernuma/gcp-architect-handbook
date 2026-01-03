@@ -1,4 +1,7 @@
-output "nginx_url" {
-  value       = "http://${module.virtual-machine.external_ip}"
-  description = "URL para verificar la instalación de NGINX"
+output "nginx_urls" {
+  # Creamos un mapa: "nombre_vm" = "http://ip_publica"
+  value = {
+    for name, vm in module.virtual-machine : name => "http://${vm.external_ip}"
+  }
+  description = "URLs de todas las instancias creadas"
 }

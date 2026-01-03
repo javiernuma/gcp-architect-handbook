@@ -1,9 +1,10 @@
 module "virtual-machine" {
-  source = "../../modules/compute/virtual-machine"
+  source   = "../../modules/compute/virtual-machine"
+  for_each = toset(var.instance_names)
 
   # Pasamos las variables que el módulo necesita
   project_id    = var.project_id
-  instance_name = var.instance_name # Nombre específico que pide el lab de Qwiklabs
+  instance_name = each.value
   machine_type  = var.machine_type
   zone          = var.zone
   image_family  = var.image_family

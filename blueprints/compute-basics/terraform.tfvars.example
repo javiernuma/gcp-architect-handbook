@@ -4,7 +4,7 @@ region       = "us-east1"
 zone         = "us-east1-b"
 
 # Personalización para el Lab 484532
-instance_name = "gcplab"
+instance_names = ["gcplab", "gcelab2"]
 machine_type  = "e2-medium"
 network_name  = "default"
 subnet_name   = "default"
