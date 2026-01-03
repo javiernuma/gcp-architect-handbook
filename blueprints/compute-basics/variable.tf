@@ -13,6 +13,11 @@ variable "machine_type" {
   type        = string
 }
 
+variable "region" {
+  type    = string
+  default = "us-central1"
+}
+
 variable "zone" {
   description = "Zona de GCP"
   type        = string
