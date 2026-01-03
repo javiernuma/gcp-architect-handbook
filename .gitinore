@@ -1,0 +1,33 @@
+# --- TERRAFORM ---
+# Archivos de estado (Contienen secretos y datos de la arquitectura en texto plano)
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# Directorio de trabajo (Binarios de los proveedores y módulos locales)
+.terraform/
+
+# Archivos de variables (Aquí es donde pones tus IDs de proyecto de DSION o Qwiklabs)
+*.tfvars
+*.tfvars.json
+
+# Archivos de log y override
+override.tf
+override.tf.json
+_override.tf
+_override.tf.json
+
+# --- GOOGLE CLOUD ---
+# Archivos de llaves de cuentas de servicio (¡NUNCA SUBIR ESTO!)
+*.json
+credentials.json
+.gcloud/
+
+# --- SISTEMA / IDE ---
+.DS_Store
+.idea/
+.vscode/
+node_modules/
+dist/
+build/

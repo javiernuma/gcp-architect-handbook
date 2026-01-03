@@ -22,18 +22,14 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.5.0
 
-      # 1. Verifica que el código esté formateado según los estándares de Hashicorp
-      - name: Terraform Format Check
-        run: terraform fmt -check -recursive
-        working-directory: .
+      # Ejecuta el formato en todo el repo y arregla el error code 3
+      - name: Terraform Format
+        run: terraform fmt -check -recursive .
 
-      # 2. Inicializa Terraform (necesario para la validación)
-      - name: Terraform Init
-        run: terraform init -backend=false
-
-      # 3. Valida la sintaxis y la lógica interna de los archivos .tf
-      - name: Terraform Validate
-        run: terraform validate
+      # Valida cada blueprint por separado (puedes añadir más líneas aquí)
+      - name: Validate Lab 01
+        run: |
+          cd blueprints/compute-basics
+          terraform init -backend=false
+          terraform validate
