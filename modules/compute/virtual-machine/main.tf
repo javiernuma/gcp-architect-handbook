@@ -1,4 +1,3 @@
-# modules/compute/virtual-machine/main.tf
 resource "google_compute_instance" "vm_instance" {
   name         = var.instance_name
   machine_type = var.machine_type
@@ -14,6 +13,7 @@ resource "google_compute_instance" "vm_instance" {
   network_interface {
     network    = var.network_name
     subnetwork = var.subnet_name
+
     dynamic "access_config" {
       for_each = var.is_public ? [1] : []
       content {}

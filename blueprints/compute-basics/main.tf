@@ -1,23 +1,20 @@
-resource "google_compute_instance" "vm_instance" {
-  name         = var.instance_name # <-- Usa la variable
-  machine_type = var.machine_type  # <-- Usa la variable
-  zone         = var.zone          # <-- Usa la variable
-  tags         = var.network_tags  # <-- Usa la variable
+module "virtualmachine" {
+  source = "../../modules/compute/virtual-machine"
 
-  boot_disk {
-    initialize_params {
-      image = var.image_family # <-- Usa la variable
-    }
-  }
+  # Pasamos las variables que el módulo necesita
+  project_id    = var.project_id
+  instance_name = var.instance_name # Nombre específico que pide el lab de Qwiklabs
+  machine_type  = var.machine_type
+  zone          = var.zone
+  image_family  = var.image_family
 
-  network_interface {
-    network    = var.network_name # <-- Usa la variable
-    subnetwork = var.subnet_name  # <-- Usa la variable
+  # Red y Seguridad
+  network_name  = var.network_name
+  subnet_name   = var.subnet_name
+  is_public     = var.is_public
+  network_tags  = var.network_tags # Esto habilita el Firewall para el puerto 80
 
-    dynamic "access_config" {
-      for_each = var.is_public ? [1] : []
-      content {}
-    }
-  }
-  metadata_startup_script = file("${path.module}/scripts/install-nginx.sh")
+  # Automatización de NGINX
+  # Leemos el script de instalación que creaste en la carpeta del módulo
+  startup_script = file("${path.module}/../../modules/compute/virtual-machine/scripts/install-nginx.sh")
 }
