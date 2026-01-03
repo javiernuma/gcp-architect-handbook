@@ -1,23 +1,22 @@
-# Invocamos el módulo de VM que definimos en la carpeta modules
-module "lab_vm" {
-  source = "../../modules/compute/virtual-machine"
+resource "google_compute_instance" "vm_instance" {
+  name         = var.instance_name # <-- Usa la variable
+  machine_type = var.machine_type  # <-- Usa la variable
+  zone         = var.zone          # <-- Usa la variable
+  tags         = var.network_tags  # <-- Usa la variable
 
-  # Pasamos las variables requeridas por el módulo
-  project_id    = var.project_id
-  instance_name = "instance-lab-01"
-  machine_type  = "e2-medium"
-  zone          = var.zone
+  boot_disk {
+    initialize_params {
+      image = var.image_family # <-- Usa la variable
+    }
+  }
 
-  # Network Tags: Vital para seguridad y Load Balancing posterior
-  network_tags = ["http-server", "lb-backend"]
+  network_interface {
+    network    = var.network_name # <-- Usa la variable
+    subnetwork = var.subnet_name  # <-- Usa la variable
 
-  # El Lab 484532 pide una VM con IP pública
-  is_public = true
-
-  # Sistema operativo solicitado en el Lab
-  image_family = "debian-cloud/debian-11"
-
-  # Pasamos el ID de la red y subred (usando la default por ahora)
-  network_name = "default"
-  subnet_name  = "default"
+    dynamic "access_config" {
+      for_each = var.is_public ? [1] : []
+      content {}
+    }
+  }
 }
