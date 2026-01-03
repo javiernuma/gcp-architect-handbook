@@ -1,3 +1,10 @@
-project_id = "qwiklabs-gcp-01-xxxxxx" # El ID del lab
-region     = "us-central1"
-zone       = "us-central1-a"
+# Valores que verás en el panel izquierdo de Qwiklabs
+project_id   = "qwiklabs-gcp-04-xxxxxx"
+region       = "us-east1"
+zone         = "us-east1-b"
+
+# Personalización para el Lab 484532
+instance_name = "gcplab"
+machine_type  = "e2-medium"
+network_name  = "default"
+subnet_name   = "default"
