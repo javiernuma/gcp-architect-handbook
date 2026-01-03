@@ -7,3 +7,8 @@ output "external_ip" {
 output "instance_name" {
   value = google_compute_instance.vm_instance.name
 }
+
+output "nginx_url" {
+  value       = "http://${module.lab_vm.external_ip}"
+  description = "Copia y pega esta URL en tu navegador para verificar NGINX"
+}

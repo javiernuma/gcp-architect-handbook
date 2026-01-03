@@ -26,7 +26,7 @@ variable "zone" {
 variable "network_tags" {
   description = "Etiquetas de red para firewall"
   type        = list(string)
-  default     = []
+  default     = ["http-server"]
 }
 
 variable "is_public" {

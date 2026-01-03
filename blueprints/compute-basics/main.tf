@@ -19,4 +19,5 @@ resource "google_compute_instance" "vm_instance" {
       content {}
     }
   }
+  metadata_startup_script = file("${path.module}/scripts/install-nginx.sh")
 }
