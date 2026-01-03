@@ -1,39 +1,48 @@
 variable "project_id" {
-  description = "GCP Project ID"
+  description = "ID del proyecto de GCP"
   type        = string
 }
 
-variable "region" {
-  type    = string
-  default = "us-central1"
-}
-
-variable "zone" {
-  type    = string
-  default = "us-central1-a"
+variable "instance_name" {
+  description = "Nombre de la instancia"
+  type        = string
 }
 
 variable "machine_type" {
-  type    = string
-  default = "e2-medium"
+  description = "Tipo de máquina (ej: e2-medium)"
+  type        = string
 }
 
-variable "is_public" {
-  type    = bool
-  default = true
-}
-
-variable "network_name" {
-  type    = string
-  default = "default"
-}
-
-variable "subnet_name" {
-  type    = string
-  default = "default"
+variable "zone" {
+  description = "Zona de GCP"
+  type        = string
 }
 
 variable "network_tags" {
-  type    = list(string)
-  default = ["http-server", "lb-backend"]
+  description = "Etiquetas de red para firewall"
+  type        = list(string)
+  default     = []
+}
+
+variable "is_public" {
+  description = "Define si la VM tiene IP pública"
+  type        = bool
+  default     = false
+}
+
+variable "image_family" {
+  description = "Imagen del sistema operativo"
+  type        = string
+}
+
+variable "network_name" {
+  description = "Nombre de la red VPC"
+  type        = string
+  default     = "default"
+}
+
+variable "subnet_name" {
+  description = "Nombre de la subred"
+  type        = string
+  default     = "default"
 }
