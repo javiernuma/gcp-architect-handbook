@@ -11,33 +11,27 @@ jobs:
     name: "Terraform Lint and Validate"
     runs-on: ubuntu-latest
 
-    # Definimos el directorio de trabajo donde están tus módulos
-    defaults:
-      run:
-        working-directory: ./modules/compute/virtual-machine
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
 
-      # Ejecuta el formato en todo el repo y arregla el error code 3
-      - name: Terraform Format
+      # Verifica el formato en todo el repositorio
+      - name: Terraform Format Check
         run: terraform fmt -check -recursive .
 
-      # Valida cada blueprint por separado (puedes añadir más líneas aquí)
+      # Validación del Lab 01
       - name: Validate Lab 01
         run: |
-      # Usamos -d para verificar si el directorio existe antes de entrar
           if [ -d "blueprints/compute-basics" ]; then
             cd blueprints/compute-basics
             terraform init -backend=false
             terraform validate
           else
-            echo "Error: La carpeta blueprints/compute-basics no existe en el repo."
-            ls -R blueprints # Esto te ayudará a ver qué nombres tienen tus carpetas en el log de GitHub
+            echo "Directory blueprints/compute-basics not found"
             exit 1
           fi
-          
