@@ -1,13 +1,10 @@
 # TASK 1: Tres instancias web individuales
 module "web_servers" {
-  source   = "../../modules/compute/virtual-machine"
-  for_each = toset(["web1", "web2", "web3"])
-
-  project_id    = var.project_id
-  instance_name = each.value
-  machine_type  = "e2-small"
-  zone          = var.zone
-  network_tags  = ["network-lb-tag"]
+  source       = "../../modules/compute/instance-template"
+  for_each     = toset(var.instance_names)
+  name         = "web-server-template"
+  machine_type = "e2-small"
+  network_tags = ["network-lb-tag"]
   startup_script = templatefile("${path.module}/scripts/install-apache.tftpl", {
     web_number = each.value
   })
@@ -25,7 +22,7 @@ module "network_lb" {
   name       = "www-pool"
   region     = var.region
   ip_address = google_compute_address.network_lb_static_ip.address
-  instances  = [for vm in module.web_servers : vm.external_ip]
+  instances  = [for vm in module.web_servers : vm.self_link]
 }
 
 # TASK 3: Configurar HTTP Load Balancer con MIG

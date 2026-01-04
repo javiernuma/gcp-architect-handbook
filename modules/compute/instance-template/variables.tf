@@ -4,12 +4,12 @@ variable "name" {
 
 variable "machine_type" {
   type    = string
-  default = "e2-medium"
+  default = "e2-small"
 }
 
 variable "network_tags" {
   type    = list(string)
-  default = []
+  default = ["network-lb-tag"]
 }
 
 variable "image_family" {
