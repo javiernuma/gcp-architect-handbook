@@ -25,7 +25,7 @@ module "network_lb" {
   name       = "www-pool"
   region     = var.region
   ip_address = google_compute_address.network_lb_static_ip.address
-  instances  = [for vm in module.web_servers : vm.instance_self_link]
+  instances  = [for vm in module.web_servers : vm.external_ip]
 }
 
 # TASK 3: Configurar HTTP Load Balancer con MIG
