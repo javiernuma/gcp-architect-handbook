@@ -10,6 +10,6 @@ output "http_lb_url" {
 # IPs de las instancias individuales para verificar con curl (Task 1)
 output "individual_vm_ips" {
   value = {
-    for name, vm in module.web_servers : name => vm.external_ip
+    for name, vm in module.web_servers : name => vm.self_link
   }
 }
