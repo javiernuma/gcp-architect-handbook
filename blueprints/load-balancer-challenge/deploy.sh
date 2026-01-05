@@ -54,8 +54,8 @@ if ! command -v terraform &> /dev/null; then
 fi
 
 # Verificar si el archivo de script de inicio existe (ADR-002)
-if [[ ! -f "./scripts/install-apache-mig.sh" ]]; then
-    error "Archivo critico no encontrado: ./scripts/install-apache-mig.sh"
+if [[ ! -f "./scripts/install-apache.sh" ]]; then
+    error "Archivo critico no encontrado: ./scripts/install-apache.sh"
 fi
 
 # 2. Detección de Proyecto y Entorno
