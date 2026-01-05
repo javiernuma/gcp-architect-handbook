@@ -1,15 +1,9 @@
-output "network_lb_url" {
-  description = "URL del Network Load Balancer"
-  value       = "http://${module.network_lb.lb_ip}"
+output "network_lb_ip" {
+  description = "IP del Network Load Balancer (Task 2)"
+  value       = google_compute_address.network_lb_ip.address
 }
 
-output "http_lb_url" {
-  description = "URL del HTTP Load Balancer Global"
-  value       = "http://${module.http_lb.lb_ip}"
-}
-# IPs de las instancias individuales para verificar con curl (Task 1)
-output "individual_vm_ips" {
-  value = {
-    for name, vm in module.web_servers : name => vm.self_link
-  }
+output "http_lb_ip" {
+  description = "IP del HTTP Load Balancer (Task 3)"
+  value       = google_compute_global_address.http_lb_ip.address
 }

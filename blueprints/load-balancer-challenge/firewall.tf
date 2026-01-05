@@ -1,5 +1,6 @@
-resource "google_compute_firewall" "fw_allow_health_check" {
-  name    = "fw-allow-health-check" # Nombre exacto del reto
+# Task 1: Firewall para las instancias standalone (Target: network-lb-tag)
+resource "google_compute_firewall" "www_firewall_network_lb" {
+  name    = "www-firewall-network-lb"
   network = "default"
 
   allow {
@@ -7,9 +8,20 @@ resource "google_compute_firewall" "fw_allow_health_check" {
     ports    = ["80"]
   }
 
-  # IPs críticas de Google para Health Checks y Load Balancing
-  source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["network-lb-tag"]
+}
 
-  # Este tag DEBE coincidir con el que pusiste en el modulo lb_template
-  target_tags = ["allow-health-check"]
+# Task 3: Firewall para Health Checks de Google (Target: allow-health-check)
+resource "google_compute_firewall" "fw_allow_health_check" {
+  name          = "fw-allow-health-check"
+  network       = "default"
+  direction     = "INGRESS"
+  source_ranges = ["130.211.0.0/22", "35.191.0.0/16"] # Rangos oficiales de Google
+  target_tags   = ["allow-health-check"]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80"]
+  }
 }
