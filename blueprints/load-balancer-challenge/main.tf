@@ -39,7 +39,7 @@ module "network_lb" {
   region     = var.region
   ip_address = google_compute_address.network_lb_ip.address
   # Referencia dinámica a los self_links de las VMs creadas [cite: 78]
-  instances = [for vm in module.web_servers : vm.external_ip]
+  instances = [for vm in module.web_servers : vm.self_link]
 }
 
 # ==========================================================

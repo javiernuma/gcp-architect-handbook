@@ -7,3 +7,7 @@ output "external_ip" {
   description = "IP pública de la instancia (si existe)"
 }
 
+output "self_link" {
+  description = "El URI del recurso para ser usado en Target Pools o Backend Services"
+  value       = google_compute_instance.vm_instance.self_link
+}
