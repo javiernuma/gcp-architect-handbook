@@ -7,101 +7,86 @@ RED='\033[0;31m'
 NC='\033[0m'
 BOLD='\033[1m'
 
-# --- Función de Limpieza (Si el usuario cancela con Ctrl+C) ---
-cleanup() {
-    echo -e "\n${YELLOW}${BOLD}AVISO:${NC} Proceso interrumpido por el usuario. Limpiando archivos temporales..."
-    rm -rf .terraform.lock.hcl 2>/dev/null
-    exit 1
-}
-trap cleanup SIGINT
-
 # --- Funciones de Mensajería ---
 info() { echo -e "${BOLD}==>${NC} $@"; }
 success() { echo -e "${GREEN}${BOLD}✔️ SUCCESS:${NC} $@"; }
 warn() { echo -e "${YELLOW}${BOLD}⚠️ WARNING:${NC} $@"; }
-error() {
-    echo -e "${RED}${BOLD}❌ ERROR:${NC} $@" >&2
-    echo -e "${RED}El despliegue se detuvo. Revisa los mensajes de arriba.${NC}"
-    exit 1
-}
+error() { echo -e "${RED}${BOLD}❌ ERROR:${NC} $@" >&2; exit 1; }
 
-# --- Función de Spinner ---
-spinner() {
-    local pid=$!
-    local delay=0.1
-    local spinstr='|/-\'
-    while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
-        local temp=${spinstr#?}
-        printf " [${YELLOW}%c${NC}]  " "$spinstr"
-        local spinstr=$temp${spinstr%"$temp"}
-        sleep $delay
-        printf "\b\b\b\b\b\b"
-    done
-    printf "    \b\b\b\b"
-}
+# --- Detección de Parámetros ---
+ACTION="apply"
+if [[ "$1" == "--destroy" ]]; then
+    ACTION="destroy"
+fi
 
 clear
 echo -e "${GREEN}=============================================${NC}"
-echo -e "${GREEN}${BOLD}   GCP Architect Handbook: GSP313 Deployer   ${NC}"
+echo -e "${GREEN}${BOLD}   GCP Architect Handbook: LifeCycle Tool    ${NC}"
 echo -e "${GREEN}=============================================${NC}"
 
-# 1. Validaciones de Pre-vuelo (Error Handling preventivo)
-info "Ejecutando validaciones de pre-vuelo..."
-
-# Verificar si Terraform está instalado
-if ! command -v terraform &> /dev/null; then
-    error "Terraform no está instalado. Instálalo para continuar."
-fi
-
-# Verificar si el archivo de script de inicio existe (ADR-002)
-if [[ ! -f "./scripts/install-apache.sh" ]]; then
-    error "Archivo critico no encontrado: ./scripts/install-apache.sh"
-fi
-
-# 2. Detección de Proyecto y Entorno
+# 1. Detección de Proyecto
 PROJECT_ID=$(gcloud config get-value project 2>/dev/null)
+REGION="us-west3"
+ZONE="us-west3-b"
+
 if [[ -z "$PROJECT_ID" ]]; then
-    error "No se pudo detectar el Project ID de GCP. Ejecuta 'gcloud config set project [ID]'."
+    error "No se detectó Project ID. Ejecuta 'gcloud config set project'."
 fi
 
-REGION="us-west3" # Valores por defecto para el lab
-ZONE="us-west3-a"
+# 2. Lógica de Destrucción (Confirmación en Amarillo)
+if [[ "$ACTION" == "destroy" ]]; then
+    echo -e "${YELLOW}${BOLD}❗ ATENCIÓN:${NC}"
+    echo -e "${YELLOW}Estás a punto de eliminar todos los recursos del Challenge Lab GSP313.${NC}"
+    read -p "$(echo -e ${BOLD}"¿Estás seguro de que deseas continuar? (y/n): "${NC})" CONFIRM
 
-success "Entorno detectado: ${BOLD}$PROJECT_ID${NC}"
+    if [[ "$CONFIRM" != "y" ]]; then
+        info "Operación cancelada."
+        exit 0
+    fi
 
-# 3. Inicialización de Terraform
+    info "Iniciando destrucción de la infraestructura..."
+    terraform destroy -auto-approve \
+        -var="project_id=$PROJECT_ID" \
+        -var="region=$REGION" \
+        -var="zone=$ZONE"
+
+    if [ $? -eq 0 ]; then
+        success "Infraestructura eliminada. El entorno está limpio."
+    else
+        error "Hubo un problema al eliminar los recursos."
+    fi
+    exit 0
+fi
+
+# 3. Lógica de Despliegue (Default)
+info "Entorno: ${BOLD}$PROJECT_ID${NC}"
+info "Inicializando Terraform..."
 info "Inicializando módulos y plugins..."
-if ! terraform init -quiet > /tmp/tf_init_err.log 2>&1; then
-    cat /tmp/tf_init_err.log
-    error "Fallo en 'terraform init'. Revisa los logs anteriores."
+# Eliminamos el -quiet para ver qué está pasando si falla
+terraform init -input=false > /tmp/tf_init.log 2>&1 &
+spinner
+
+# Verificamos si el proceso de fondo terminó con éxito
+wait $!
+if [ $? -ne 0 ]; then
+    echo -e "${RED}Error detectado en la inicialización:${NC}"
+    cat /tmp/tf_init.log | grep -i "error" || cat /tmp/tf_init.log
+    error "Fallo en 'terraform init'. Asegúrate de estar en la carpeta del blueprint."
 fi
 success "Terraform listo."
 
-# 4. Validación de Sintaxis
-info "Validando coherencia de los Blueprints..."
-if ! terraform validate > /dev/null; then
-    error "La validación de Terraform falló. Revisa tus archivos .tf"
-fi
-success "Configuración válida."
+info "Validando configuración..."
+terraform validate > /dev/null || error "Validación fallida."
 
-# 5. Aplicación con Manejo de Errores en Tiempo de Ejecución
-info "Desplegando infraestructura modular..."
-echo -e "${YELLOW}Nota: La creación de Load Balancers Globales suele tardar entre 3-5 minutos.${NC}"
-
-# Ejecución y captura de salida
-terraform apply -auto-approve \
+info "Desplegando recursos modulares..."
+if terraform apply -auto-approve \
     -var="project_id=$PROJECT_ID" \
     -var="region=$REGION" \
-    -var="zone=$ZONE"
+    -var="zone=$ZONE"; then
 
-if [ $? -eq 0 ]; then
     echo ""
-    echo -e "${GREEN}=============================================${NC}"
-    success "¡Laboratorio GSP313 completado exitosamente!"
-    echo -e "${GREEN}=============================================${NC}"
-    echo ""
-    info "IPs de Balanceo generadas:"
+    success "¡Laboratorio desplegado correctamente!"
     terraform output
 else
-    error "La ejecución de Terraform falló durante el despliegue de recursos."
+    error "El despliegue falló."
 fi
