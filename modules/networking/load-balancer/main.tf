@@ -1,14 +1,17 @@
 # --- NETWORK LOAD BALANCER (L4) ---
 resource "google_compute_http_health_check" "basic_check" {
-  name = "basic-check"
+  # Cambiamos el nombre estático por uno dinámico
+  name  = "${var.name}-hc"
+  count = var.type == "NETWORK" ? 1 : 0
 }
 
 resource "google_compute_target_pool" "l4_pool" {
-  count         = var.type == "NETWORK" ? 1 : 0
-  name          = "www-pool" # Nombre exacto Task 2
-  region        = var.region
-  instances     = var.instances
-  health_checks = [google_compute_http_health_check.basic_check.name]
+  count     = var.type == "NETWORK" ? 1 : 0
+  name      = "www-pool"
+  region    = var.region
+  instances = var.instances
+  # Referenciamos el nuevo nombre dinámico
+  health_checks = [google_compute_http_health_check.basic_check[0].name]
 }
 
 resource "google_compute_forwarding_rule" "l4_forwarding" {
