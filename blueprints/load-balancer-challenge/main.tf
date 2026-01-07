@@ -77,10 +77,6 @@ resource "google_compute_instance_group_manager" "lb_backend_group" {
   }
 }
 
-# 3. Balanceador HTTP Global
-resource "google_compute_global_address" "http_lb_ip" {
-  name = "lb-ipv4-1"
-}
 
 # Health Check requerido para el Backend Service [cite: 76]
 resource "google_compute_health_check" "http_basic_check" {

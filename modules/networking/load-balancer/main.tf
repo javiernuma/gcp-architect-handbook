@@ -4,10 +4,10 @@ resource "google_compute_http_health_check" "basic_check" {
 }
 
 resource "google_compute_target_pool" "l4_pool" {
-  count     = var.type == "NETWORK" ? 1 : 0
-  name      = "www-pool" # Nombre exacto Task 2
-  region    = var.region
-  instances = var.instances
+  count         = var.type == "NETWORK" ? 1 : 0
+  name          = "www-pool" # Nombre exacto Task 2
+  region        = var.region
+  instances     = var.instances
   health_checks = [google_compute_http_health_check.basic_check.name]
 }
 
