@@ -1,6 +1,10 @@
 # ==========================================================
 # TASK 1: INSTANCIAS STANDALONE (Módulo Virtual Machine)
 # ==========================================================
+# 1. Dirección IP Global Estática
+resource "google_compute_global_address" "http_lb_ip" {
+  name = "lb-ipv4-1"
+}
 
 # Despliegue dinámico de web1, web2, web3
 module "web_servers" {
@@ -35,7 +39,7 @@ resource "google_compute_address" "network_lb_ip" {
 module "network_lb" {
   source     = "../../modules/networking/load-balancer"
   type       = "NETWORK"
-  name       = "www-pool"
+  name       = "www"
   region     = var.region
   ip_address = google_compute_address.network_lb_ip.address
   # Referencia dinámica a los self_links de las VMs creadas [cite: 78]
